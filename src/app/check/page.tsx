@@ -163,7 +163,7 @@ export default function CheckPage() {
 
 /** "Vitamin C" reads as "vitamin C" mid-sentence; acronyms such as "AHA" are left alone. */
 function inSentence(name: string): string {
-  return /^[A-Z][a-z]/.test(name) ? name[0].toLowerCase() + name.slice(1) : name;
+  return /^[A-Z](?![A-Z])/.test(name) ? name[0].toLowerCase() + name.slice(1) : name;
 }
 
 function Result({ result, onTrack, tracked }: { result: CreamResult; onTrack: () => void; tracked: boolean }) {
