@@ -43,15 +43,15 @@ export default function ScanPage() {
       setPhase("uploading");
       const form = new FormData();
       form.set("image", img.blob, "selfie.jpg");
-      form.set("fitzpatrick", "1");
       const start = await postJson<StartResponse>("/api/skin/start", form);
       setPhase("analysing");
-      const q = new URLSearchParams({ skin: start.skinTaskId });
-      if (start.fitzTaskId) q.set("fitz", start.fitzTaskId);
       const result = await pollUntilDone<{ state: string; report?: SkinReport; message?: string }>(
-        `/api/skin/status?${q}`,
+        `/api/skin/status?skin=${encodeURIComponent(start.skinTaskId)}`,
       );
       if (result.state !== "done" || !result.report) throw new Error(result.message ?? "The skin check failed.");
+      // Skin tone runs only once the photo has passed the skin check, so a
+      // rejected photo costs nothing. It is optional: a failure keeps the report.
+      result.report.fitzpatrick = await skinTone(start.fileId);
       addScan(result.report, start.mode, start.fileId);
       setReport(result.report);
       setFileId(start.fileId);
@@ -73,8 +73,8 @@ export default function ScanPage() {
       <div>
         <h1 className="font-display text-3xl font-semibold">Skin check</h1>
         <p className="mt-2 text-muted">
-          Face the light from a window, no makeup, hair off your face, phone at arm&apos;s length. Use the same spot
-          each time so your re-checks compare fairly.
+          Face the light from a window, no makeup, hair off your face. Hold the phone close so your face fills most
+          of the photo. Use the same spot each time so your re-checks compare fairly.
         </p>
       </div>
 
@@ -101,6 +101,19 @@ export default function ScanPage() {
       {shown && <Report report={shown} fileId={report ? fileId : null} photo={report ? photo : null} />}
     </div>
   );
+}
+
+async function skinTone(fileId: string): Promise<SkinReport["fitzpatrick"]> {
+  try {
+    const { taskId } = await postJson<{ taskId: string }>("/api/fitzpatrick", JSON.stringify({ fileId }), true);
+    const r = await pollUntilDone<{ state: string; fitzpatrick?: SkinReport["fitzpatrick"] }>(
+      `/api/fitzpatrick?task=${encodeURIComponent(taskId)}`,
+      { timeoutMs: 60_000 },
+    );
+    return r.state === "done" ? r.fitzpatrick : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function Report({ report, fileId, photo }: { report: SkinReport; fileId: string | null; photo: string | null }) {
