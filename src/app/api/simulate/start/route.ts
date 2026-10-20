@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 const Body = z.object({
   fileId: z.string().min(1).max(512),
   settings: z
-    .record(z.enum(SIM_KEYS as unknown as [SimKey, ...SimKey[]]), z.number().min(0).max(SIM_MAX_INTENSITY))
+    .partialRecord(z.enum(SIM_KEYS as unknown as [SimKey, ...SimKey[]]), z.number().min(0).max(SIM_MAX_INTENSITY))
     .refine((s) => Object.values(s).some((v) => (v ?? 0) > 0), "at least one intensity above 0")
     .refine((s) => Object.keys(s).length <= SIM_MAX_CONCERNS, "too many concerns"),
 });
