@@ -79,9 +79,12 @@ TrueGlow was created from scratch during the submission period (first commit 20 
 
 ## Screenshots to upload
 
-1. Home: "Check your skin, then check the cream."
-2. Skin check report with real scores and "What to focus on".
-3. Safe-care preview (before and after).
-4. Cream check: the "Do not use this on your skin" verdict with hydroquinone 4% and clobetasol findings and their sources.
-5. Cream check: "For your skin", matched to the skin check.
-6. Is it working?: a tracked product with the start and now comparison table.
+Phone-width captures of the live site are in `docs/screenshots/`:
+
+1. `1-home.png`: "Check your skin, then check the cream."
+2. `2-skin-check-report.png`: a real YouCam skin report with "What to focus on".
+3. `3-cream-check-verdict.png`: the "Do not use this on your skin" verdict, with the hydroquinone 4% and clobetasol findings and their sources.
+4. `4-cream-check-for-your-skin.png`: the cream matched to the skin check.
+5. `5-is-it-working.png`: a tracked product (demo history) with the start and now comparison.
+
+Still to capture on the phone during recording: the safe-care preview (before and after), which needs a fresh scan.
