@@ -161,6 +161,11 @@ export default function CheckPage() {
   );
 }
 
+/** "Vitamin C" reads as "vitamin C" mid-sentence; acronyms such as "AHA" are left alone. */
+function inSentence(name: string): string {
+  return /^[A-Z][a-z]/.test(name) ? name[0].toLowerCase() + name.slice(1) : name;
+}
+
 function Result({ result, onTrack, tracked }: { result: CreamResult; onTrack: () => void; tracked: boolean }) {
   return (
     <div className="space-y-4" aria-live="polite">
@@ -204,9 +209,9 @@ function Result({ result, onTrack, tracked }: { result: CreamResult; onTrack: ()
               <li key={fit.concern}>
                 <b>{CONCERNS[fit.concern].label}:</b>{" "}
                 {fit.present.length ? (
-                  <span>has {fit.present.map((p) => p.name).join(", ")}.</span>
+                  <span>has {fit.present.map((p) => inSentence(p.name)).join(", ")}.</span>
                 ) : (
-                  <span className="text-muted">nothing here targets this. Look for {fit.lookFor.join(", ")}.</span>
+                  <span className="text-muted">nothing here targets this. Look for {fit.lookFor.map(inSentence).join(", ")}.</span>
                 )}
               </li>
             ))}
